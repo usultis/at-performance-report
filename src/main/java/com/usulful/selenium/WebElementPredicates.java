@@ -13,4 +13,14 @@ public class WebElementPredicates {
             }
         };
     }
+
+    public static Predicate<? super WebElement> withTitle(final String title) {
+        return new Predicate<WebElement>() {
+            @Override
+            public boolean apply(WebElement webElement) {
+                String title = webElement.getAttribute("title");
+                return title != null && title.trim().equals(title);
+            }
+        };
+    }
 }
