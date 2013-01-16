@@ -25,19 +25,26 @@ public class PerformanceIntegrationTest {
                 .enterJobName("Jenkins_Acceptance_Tests")
                 .freestyleBuild()
                 .clickOK()
-                        //job configuration
+                //job configuration
                 .scm("Git")
                 .enter("git.repo.url", "https://github.com/usultis/at-performance-report.git")
                 .addBuildStep("Invoke top-level Maven targets")
+                .addPostBuildStep("Publish Performance test result report")
+                .clickButton("Add a new report")
+                .clickLinkWithText("JMeter")
+                .enter("_.glob", "**/*.jtl")
+                .clickMavenAdvanced()
+                .jvmOptions("-Djetty.skip")
                 .goals("verify")
                 .save()
-                        //main page
+                //main page
                 .openJob("Jenkins_Acceptance_Tests")
                 .buildNow()
                 .openConsole()
                 .waitForBuildToFinish()
                 .backToProject()
-                .performanceReport();
+                .performanceTrend()
+                .clickLastReport();
     }
 
     private MainPage openMainPage() {
@@ -50,15 +57,20 @@ public class PerformanceIntegrationTest {
     }
 
     @Before
-    public void before() {
+    public void before() throws IOException {
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        deleteJob();
     }
 
     @After
     public void after() throws IOException {
+        deleteJob();
+        driver.close();
+    }
+
+    private void deleteJob() throws IOException {
         HttpPost delete = new HttpPost(MAIN_URL + "job/Jenkins_Acceptance_Tests/doDelete");
         new DefaultHttpClient().execute(delete);
-        driver.close();
     }
 }

@@ -33,8 +33,8 @@ public class JobPage {
         return PageFactory.initElements(driver, BuildConsolePage.class);
     }
 
-    public PerformanceReportPage performanceReport() {
-        driver.findElement(By.linkText("Performance report")).click();
+    public PerformanceReportPage performanceTrend() {
+        driver.findElement(By.linkText("Performance Trend")).click();
         return PageFactory.initElements(driver, PerformanceReportPage.class);
     }
 }
