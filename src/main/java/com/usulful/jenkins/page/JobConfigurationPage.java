@@ -43,8 +43,8 @@ public class JobConfigurationPage {
         return this;
     }
 
-    public JobConfigurationPage jvmOptions(String options) {
-        driver.findElement(By.name("_.jvmOptions")).sendKeys(options);
+    public JobConfigurationPage buildProperties(String options) {
+        driver.findElement(By.name("_.properties")).sendKeys(options);
         return this;
     }
 

@@ -15,8 +15,8 @@ public class RestApi {
         this.mainUrl = mainUrl;
     }
 
-    public void deleteJob() throws IOException {
-        HttpPost delete = new HttpPost(mainUrl + "job/Jenkins_Acceptance_Tests/doDelete");
+    public void deleteJob(final String jobName) throws IOException {
+        HttpPost delete = new HttpPost(mainUrl + "job/"+ jobName +"/doDelete");
         HttpResponse response = new DefaultHttpClient().execute(delete);
         LoggerFactory.getLogger(this.getClass()).debug("Delete response:" + response.getStatusLine().getStatusCode());
     }

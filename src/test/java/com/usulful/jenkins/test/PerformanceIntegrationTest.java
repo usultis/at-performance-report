@@ -15,16 +15,17 @@ import java.util.concurrent.TimeUnit;
 public class PerformanceIntegrationTest {
 
     private static final String MAIN_URL = "http://localhost:9080/";
+    private static final String JOB_NAME = System.getProperty("jobName", "Jenkins_Acceptance_Tests");
     private WebDriver driver;
 
     @Test
-    public void shouldShowPerformanceOfJenkinsAts() {
+    public void shouldShowPerformanceOfJenkinsAtsLevel1() {
         openMainPage()
                 .clickNewJob()
-                .enterJobName("Jenkins_Acceptance_Tests")
+                .enterJobName(JOB_NAME)
                 .freestyleBuild()
                 .clickOK()
-                //job configuration
+                        //job configuration
                 .scm("Git")
                 .enter("git.repo.url", "https://github.com/usultis/at-performance-report.git")
                 .addBuildStep("Invoke top-level Maven targets")
@@ -33,17 +34,41 @@ public class PerformanceIntegrationTest {
                 .clickLinkWithText("JMeter")
                 .enter("_.glob", "**/*.jtl")
                 .clickMavenAdvanced()
-                .jvmOptions("-Djetty.skip")
+                .buildProperties("jetty.skip=true\nDit.test=PerformanceIntegrationTest#shouldShowPerformanceOfJenkinsAtsLevel2")
                 .goals("verify")
                 .save()
-                //main page
-                .openJob("Jenkins_Acceptance_Tests")
+                        //main page
+                .openJob(JOB_NAME)
                 .buildNow()
                 .openConsole()
                 .waitForBuildToFinish()
                 .backToProject()
                 .performanceTrend()
                 .clickLastReport();
+    }
+
+    @Test
+    public void shouldShowPerformanceOfJenkinsAtsLevel2() {
+        openMainPage()
+                .clickNewJob()
+                .enterJobName(JOB_NAME)
+                .freestyleBuild()
+                .clickOK()
+                        //job configuration
+                .scm("Git")
+                .enter("git.repo.url", "https://github.com/usultis/at-performance-report.git")
+                .addBuildStep("Invoke top-level Maven targets")
+                .addPostBuildStep("Publish Performance test result report")
+                .clickButton("Add a new report")
+                .clickLinkWithText("JMeter")
+                .enter("_.glob", "**/*.jtl")
+                .clickMavenAdvanced()
+                .buildProperties("jetty.skip=true")
+                .goals("verify")
+                .save()
+                        //main page
+                .openJob(JOB_NAME)
+                .performanceTrend();
     }
 
     private MainPage openMainPage() {
@@ -59,12 +84,12 @@ public class PerformanceIntegrationTest {
     public void before() throws IOException {
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        new RestApi(MAIN_URL).deleteJob();
+        new RestApi(MAIN_URL).deleteJob(JOB_NAME);
     }
 
     @After
     public void after() throws IOException {
-        new RestApi(MAIN_URL).deleteJob();
+        new RestApi(MAIN_URL).deleteJob(JOB_NAME);
         driver.close();
     }
 }
