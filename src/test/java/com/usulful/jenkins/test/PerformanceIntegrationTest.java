@@ -15,7 +15,8 @@ import java.util.concurrent.TimeUnit;
 public class PerformanceIntegrationTest {
 
     private static final String MAIN_URL = "http://localhost:9080/";
-    private static final String JOB_NAME = System.getProperty("jobName", "Jenkins_Acceptance_Tests");
+    public static final String DEFAULT_JOB_NAME = "Jenkins_Acceptance_Tests";
+    private static final String JOB_NAME = System.getProperty("jobName", DEFAULT_JOB_NAME);
     private WebDriver driver;
 
     @Test
@@ -34,7 +35,10 @@ public class PerformanceIntegrationTest {
                 .clickLinkWithText("JMeter")
                 .enter("_.glob", "**/*.jtl")
                 .clickMavenAdvanced()
-                .buildProperties("jetty.skip=true\nDit.test=PerformanceIntegrationTest#shouldShowPerformanceOfJenkinsAtsLevel2")
+                .buildProperties(
+                                "jetty.skip=true\n" +
+                                "it.test=PerformanceIntegrationTest#shouldShowPerformanceOfJenkinsAtsLevel2\n" +
+                                "jobName=" + JOB_NAME + "Level2")
                 .goals("verify")
                 .save()
                         //main page
