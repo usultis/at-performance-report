@@ -4,7 +4,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.acme.infra</groupId>
+    <groupId>com.usulful</groupId>
     <artifactId>jenkins-at-performance</artifactId>
     <version>1.499</version>
 
@@ -19,12 +19,12 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-api</artifactId>
-            <version>2.26.0</version>
+            <version>2.28.0</version>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-support</artifactId>
-            <version>2.26.0</version>
+            <version>2.28.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -34,7 +34,40 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-firefox-driver</artifactId>
-            <version>2.26.0</version>
+            <version>2.28.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.perf4j</groupId>
+            <artifactId>perf4j</artifactId>
+            <version>0.9.16</version>
+            <scope>compile</scope>
+            <classifier>logbackonly</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.6.11</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.6.11</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-jexl</groupId>
+            <artifactId>commons-jexl</artifactId>
+            <version>1.1</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
@@ -191,12 +224,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration><skip>true</skip>
+                <version>2.13</version>
+                <configuration>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.13</version>
                 <configuration>
                     <includes>
                         <include>**/*IntegrationTest.java</include>
@@ -217,6 +253,72 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.4</version>
+                <configuration>
+                    <showWeaveInfo>true</showWeaveInfo>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <weaveDependencies>
+                        <dependency>
+                            <groupId>org.perf4j</groupId>
+                            <artifactId>perf4j</artifactId>
+                            <classifier>logbackonly</classifier>
+                        </dependency>
+                    </weaveDependencies>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>org.perf4j</groupId>
+                            <artifactId>perf4j</artifactId>
+                            <classifier>logbackonly</classifier>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                def log = new File(project.basedir, "/target/perf4j.log")
+                                if (log.exists()) {
+                                    def jmeter = new File(project.basedir, "/target/jmeter.jtl")
+                                    jmeter.write('''&lt;?xml version="1.0" encoding="UTF-8"?>
+                                            &lt;testResults version="1.2">\n''');
+
+                                    log.eachLine { line ->
+                                        String name = (line =~ /tag\[(.+)\]/)[0][1];
+                                        String time = (line =~ /time\[([0-9]+)\]/)[0][1];
+                                        String timestamp = (line =~ /start\[([0-9]+)\]/)[0][1];
+                                        String entry = String.format('''&lt;sample t="%s" lt="0" ts="%s" s="true" lb="%s" rc="200" rm="" tn="Thread-Gruppe 1-1" dt="text" by="prime"/>''', time, timestamp, name);
+                                        jmeter.append(entry + "\n")
+                                    }
+                                    jmeter.append("&lt;/testResults>");
+                                }
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+
     </build>
 </project>

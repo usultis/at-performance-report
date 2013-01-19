@@ -1,8 +1,7 @@
 package com.usulful.jenkins.test;
 
+import com.usulful.jenkins.RestApi;
 import com.usulful.jenkins.page.MainPage;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PerformanceIntegrationTest {
 
-    public static final String MAIN_URL = "http://localhost:9080/";
+    private static final String MAIN_URL = "http://localhost:9080/";
     private WebDriver driver;
 
     @Test
@@ -60,17 +59,12 @@ public class PerformanceIntegrationTest {
     public void before() throws IOException {
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        deleteJob();
+        new RestApi(MAIN_URL).deleteJob();
     }
 
     @After
     public void after() throws IOException {
-        deleteJob();
+        new RestApi(MAIN_URL).deleteJob();
         driver.close();
-    }
-
-    private void deleteJob() throws IOException {
-        HttpPost delete = new HttpPost(MAIN_URL + "job/Jenkins_Acceptance_Tests/doDelete");
-        new DefaultHttpClient().execute(delete);
     }
 }

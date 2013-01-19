@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true">
+    <!-- This file appender is used to output aggregated performance statistics -->
+    <appender name="perf4jFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>target/perf4j.log</File>
+        <encoder>
+            <Pattern>%msg%n</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>target/perf4j.%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Loggers -->
+    <!--
+      The Perf4J logger. Note that org.perf4j.TimingLogger is the value of the
+      org.perf4j.StopWatch.DEFAULT_LOGGER_NAME constant. Also, note that
+      additivity is set to false, which is usually what is desired - this means
+      that timing statements will only be sent to this logger and NOT to
+      upstream loggers.
+    -->
+    <logger name="org.perf4j.TimingLogger" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="perf4jFileAppender"/>
+    </logger>
+</configuration>
