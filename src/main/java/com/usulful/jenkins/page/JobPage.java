@@ -1,16 +1,13 @@
 package com.usulful.jenkins.page;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.usulful.selenium.WebElementPredicates.withText;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class JobPage {
 
@@ -36,5 +33,10 @@ public class JobPage {
     public PerformanceReportPage performanceTrend() {
         driver.findElement(By.linkText("Performance Trend")).click();
         return PageFactory.initElements(driver, PerformanceReportPage.class);
+    }
+
+    public JobPage assertTitleContains(final String titlePart) {
+        assertThat(driver.getTitle(), containsString(titlePart));
+        return this;
     }
 }

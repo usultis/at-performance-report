@@ -1,14 +1,9 @@
 package com.usulful.jenkins.page;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static com.usulful.selenium.WebElementPredicates.withText;
 
 public class JobConfigurationPage {
     private WebDriver driver;
@@ -18,7 +13,7 @@ public class JobConfigurationPage {
     }
 
     public JobConfigurationPage scm(String scmName) {
-        findElementWithText(By.tagName("label"), scmName).click();
+        driver.findElement(By.xpath(String.format("//%s[contains(., '%s')]", "label", scmName))).click();
         return this;
     }
 
@@ -71,22 +66,7 @@ public class JobConfigurationPage {
     }
 
     private WebElement findButton(String text) {
-        return findElementWithText(By.tagName("button"), text);
-    }
-
-    private WebElement findElementWithText(final By locator, final String text) {
-        return new WebDriverWait(driver,5).until(new Function<WebDriver, WebElement>() {
-            @Override
-            public WebElement apply(WebDriver driver) {
-                return Iterables.find(driver.findElements(locator), withText(text), null);
-            }
-
-            @Override
-            public String toString() {
-                return "tag with text=" + text + " is present";
-            }
-        });
-
+        return driver.findElement(By.xpath("//button[contains(., '" + text + "')]"));
     }
 
 }

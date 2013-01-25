@@ -48,7 +48,8 @@ public class PerformanceIntegrationTest {
                 .waitForBuildToFinish()
                 .backToProject()
                 .performanceTrend()
-                .clickLastReport();
+                .clickLastReport()
+                .assertHasEntry("JobConfigurationPage.save");
     }
 
     @Test
@@ -72,7 +73,7 @@ public class PerformanceIntegrationTest {
                 .save()
                         //main page
                 .openJob(JOB_NAME)
-                .performanceTrend();
+                .assertTitleContains(JOB_NAME);
     }
 
     private MainPage openMainPage() {
@@ -86,14 +87,14 @@ public class PerformanceIntegrationTest {
 
     @Before
     public void before() throws IOException {
+        new RestApi(MAIN_URL).deleteJob(JOB_NAME);
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        new RestApi(MAIN_URL).deleteJob(JOB_NAME);
     }
 
     @After
     public void after() throws IOException {
-        new RestApi(MAIN_URL).deleteJob(JOB_NAME);
         driver.close();
+        new RestApi(MAIN_URL).deleteJob(JOB_NAME);
     }
 }

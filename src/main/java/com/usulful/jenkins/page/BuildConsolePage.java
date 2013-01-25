@@ -1,7 +1,6 @@
 package com.usulful.jenkins.page;
 
 import com.google.common.base.Predicate;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -22,14 +21,17 @@ public class BuildConsolePage {
         return PageFactory.initElements(driver, JobPage.class);
     }
 
-
     public BuildConsolePage waitForBuildToFinish() {
-        new WebDriverWait(driver,500).until(new Predicate<WebDriver>() {
+        new WebDriverWait(driver, 300).until(pageSourceContains("Finished: "));
+        return this;
+    }
+
+    private Predicate<WebDriver> pageSourceContains(final String text) {
+        return new Predicate<WebDriver>() {
             @Override
             public boolean apply(WebDriver webDriver) {
-                return webDriver.getPageSource().contains("Finished: ");
+                return webDriver.getPageSource().contains(text);
             }
-        });
-        return this;
+        };
     }
 }

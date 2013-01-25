@@ -3,6 +3,8 @@ package com.usulful.jenkins.page;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+import static junit.framework.Assert.assertTrue;
+
 public class PerformanceReportPage {
     private WebDriver driver;
 
@@ -13,6 +15,11 @@ public class PerformanceReportPage {
 
     public PerformanceReportPage clickLastReport() {
         driver.findElement(By.linkText("Last Report")).click();
+        return this;
+    }
+
+    public PerformanceReportPage assertHasEntry(final String entry) {
+        assertTrue("Page does not contain entry: " + entry, driver.getPageSource().contains(entry));
         return this;
     }
 }
