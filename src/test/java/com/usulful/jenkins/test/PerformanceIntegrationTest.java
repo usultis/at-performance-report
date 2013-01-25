@@ -22,6 +22,7 @@ public class PerformanceIntegrationTest {
     @Test
     public void shouldShowPerformanceOfJenkinsAtsLevel1() {
         openMainPage()
+                .waitForInitialization()
                 .clickNewJob()
                 .enterJobName(JOB_NAME)
                 .freestyleBuild()
