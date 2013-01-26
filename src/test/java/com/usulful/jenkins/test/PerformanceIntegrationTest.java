@@ -20,7 +20,7 @@ public class PerformanceIntegrationTest {
     private WebDriver driver;
 
     @Test
-    public void shouldShowPerformanceOfJenkinsAtsLevel1() {
+    public void shouldShowPerformanceOfJenkinsAtsLevel1() throws InterruptedException {
         openMainPage()
                 .waitForInitialization()
                 .clickNewJob()
@@ -50,7 +50,8 @@ public class PerformanceIntegrationTest {
                 .backToProject()
                 .performanceTrend()
                 .clickLastReport()
-                .assertHasEntry("JobConfigurationPage.save");
+                .assertHasEntry("JobConfigurationPage.save")
+                .wait5Seconds();
     }
 
     @Test
