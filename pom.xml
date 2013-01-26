@@ -292,6 +292,20 @@
                 <version>1.4</version>
                 <executions>
                     <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                def log = new File(project.basedir, "/target/perf4j.log")
+                                if (log.exists()) {
+                                    log.delete();
+                                }
+                            </source>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <phase>post-integration-test</phase>
                         <goals>
                             <goal>execute</goal>
@@ -319,6 +333,5 @@
                 </executions>
             </plugin>
         </plugins>
-
     </build>
 </project>

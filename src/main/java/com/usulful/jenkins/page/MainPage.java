@@ -7,7 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class MainPage {
-    private static final int INITIALIZATION_TIMEOUT_IN_SECONDS = 20;
+    private static final int INITIALIZATION_TIMEOUT_IN_SECONDS = 30;
     private static final String NEW_JOB = "New Job";
     private WebDriver driver;
 
