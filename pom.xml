@@ -292,6 +292,7 @@
                 <version>1.4</version>
                 <executions>
                     <execution>
+                        <id>clean-perf4j-log</id>
                         <phase>pre-integration-test</phase>
                         <goals>
                             <goal>execute</goal>
@@ -306,6 +307,7 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>perf4j-log-to-jmeter-jtl</id>
                         <phase>post-integration-test</phase>
                         <goals>
                             <goal>execute</goal>
