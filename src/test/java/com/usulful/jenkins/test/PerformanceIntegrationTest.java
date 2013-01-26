@@ -37,7 +37,7 @@ public class PerformanceIntegrationTest {
                 .enter("_.glob", "**/*.jtl")
                 .clickMavenAdvanced()
                 .buildProperties(
-                                "jetty.skip=true\n" +
+                        "jetty.skip=true\n" +
                                 "it.test=PerformanceIntegrationTest#shouldShowPerformanceOfJenkinsAtsLevel2\n" +
                                 "jobName=" + JOB_NAME + "Level2")
                 .goals("verify")
@@ -95,7 +95,8 @@ public class PerformanceIntegrationTest {
 
     @After
     public void after() throws IOException {
-        driver.close();
+        driver.quit();
+        new RestApi(MAIN_URL).stopBuild(JOB_NAME, 1);
         new RestApi(MAIN_URL).deleteJob(JOB_NAME);
     }
 }

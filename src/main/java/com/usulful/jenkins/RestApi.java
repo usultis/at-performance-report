@@ -16,8 +16,16 @@ public class RestApi {
     }
 
     public void deleteJob(final String jobName) throws IOException {
-        HttpPost delete = new HttpPost(mainUrl + "job/"+ jobName +"/doDelete");
+        delete(mainUrl + "job/" + jobName + "/doDelete");
+    }
+
+    public void stopBuild(final String jobName, final int number) throws IOException {
+        delete(mainUrl + "job/" + jobName + "/" + number + "/stop");
+    }
+
+    private void delete(final String url) throws IOException {
+        HttpPost delete = new HttpPost(url);
         HttpResponse response = new DefaultHttpClient().execute(delete);
-        LoggerFactory.getLogger(this.getClass()).debug("Delete response:" + response.getStatusLine().getStatusCode());
+        LoggerFactory.getLogger(this.getClass()).debug("DELETE " + url + " response:" + response.getStatusLine().getStatusCode());
     }
 }
