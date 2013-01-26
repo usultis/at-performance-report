@@ -2,8 +2,9 @@ package com.usulful.jenkins.page;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static junit.framework.Assert.assertTrue;
+import static com.usulful.selenium.WebDriverPredicates.pageSourceContains;
 
 public class PerformanceReportPage {
     private WebDriver driver;
@@ -18,8 +19,8 @@ public class PerformanceReportPage {
         return this;
     }
 
-    public PerformanceReportPage assertHasEntry(final String entry) {
-        assertTrue("Page does not contain entry: " + entry, driver.getPageSource().contains(entry));
+    public PerformanceReportPage assertHasEntry(final String text) {
+        new WebDriverWait(driver,5).until(pageSourceContains(text));
         return this;
     }
 
