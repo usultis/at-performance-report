@@ -8,6 +8,10 @@
     <artifactId>jenkins-at-performance</artifactId>
     <version>1.499</version>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <repositories>
         <repository>
             <id>jenkins-releases</id>
