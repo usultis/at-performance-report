@@ -18,7 +18,7 @@ public class WebDriverPredicates {
 
         @Override
         public boolean apply(WebDriver webDriver) {
-            return false;
+            return webDriver.getPageSource().contains(text);
         }
 
         @Override
