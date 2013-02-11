@@ -1,5 +1,8 @@
 package com.usulful.aop;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
+import org.apache.commons.exec.util.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -26,7 +29,11 @@ public class PageTimingAspect extends AbstractTimingAspect {
     @Around(value = "execution(public !static * com.usulful..*Page.*(..))", argNames = "pjp")
     public Object doPerfLogging(final ProceedingJoinPoint pjp) throws Throwable {
         final String methodName = pjp.getSignature().getName();
-        String tagName = tagName(pjp.getTarget().getClass().getSimpleName(), methodName);
+        String tagName = tagName(
+                pjp.getTarget().getClass().getSimpleName(),
+                methodName,
+                pjp.getArgs()
+        );
         Profiled profiled = profiled(tagName);
         //We just delegate to the super class, wrapping the AspectJ-specific ProceedingJoinPoint as an AbstractJoinPoint
         return runProfiledMethod(
@@ -52,8 +59,8 @@ public class PageTimingAspect extends AbstractTimingAspect {
         );
     }
 
-    private String tagName(final String claz, final String methodName) {
-        return claz + "." + methodName;
+    private String tagName(final String claz, final String methodName, Object[] args) {
+        return String.format("%s.%s(%s)", claz, methodName, Joiner.on(", ").join(args));
     }
 
     private Profiled profiled(final String tagName) {
