@@ -80,7 +80,7 @@ public class PageTimingAspect extends AbstractTimingAspect {
             }
 
             private String shortify(String text) {
-                return text.length() > 20 ? text.substring(0, 17) + "..." : text;
+                return text.length() > 30 ? text.substring(0, 27) + "..." : text;
             }
         };
     }
