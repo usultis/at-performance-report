@@ -1,8 +1,9 @@
 package com.usulful.aop;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
-import org.apache.commons.exec.util.StringUtils;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -60,7 +61,28 @@ public class PageTimingAspect extends AbstractTimingAspect {
     }
 
     private String tagName(final String claz, final String methodName, Object[] args) {
-        return String.format("%s.%s(%s)", claz, methodName, Joiner.on(", ").join(args));
+        return String.format("%s.%s(%s)", claz, methodName, Joiner.on(", ").join(sanitize(args)));
+    }
+
+    private Iterable<String> sanitize(Object[] args) {
+        return Iterables.transform(ImmutableList.copyOf(args), sanitize());
+    }
+
+    private Function<Object, String> sanitize() {
+        return new Function<Object, String>() {
+            @Override
+            public String apply(Object input) {
+                return input != null ? shortify(whitespaceToSpace(input.toString())) : "";
+            }
+
+            private String whitespaceToSpace(String text) {
+                return text.replaceAll("(\\n|\\r|\\t)+", " ");
+            }
+
+            private String shortify(String text) {
+                return text.length() > 20 ? text.substring(0, 17) + "..." : text;
+            }
+        };
     }
 
     private Profiled profiled(final String tagName) {
