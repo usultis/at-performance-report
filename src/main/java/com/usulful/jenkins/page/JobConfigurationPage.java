@@ -60,8 +60,7 @@ public class JobConfigurationPage {
     }
 
     public JobConfigurationPage clickMavenAdvanced() {
-        driver.findElements(By.xpath("//button[contains(., 'Advanced...')]")).get(6).click();
-        //driver.findElements(By.cssSelector("css=button:contains('Advanced...')")).get(1).click();
+        driver.findElement(By.xpath("//div[@descriptorid='hudson.tasks.Maven']/descendant-or-self::node()/child::button[contains(., 'Advanced...')]")).click();
         return this;
     }
 
